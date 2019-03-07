@@ -1,0 +1,150 @@
+{
+  "name": "iot-agent",
+  "version": "1.1.7",
+  "description": "Encode / decode MQTT stream from IoT devices to Web browsers.",
+  "main": "./dist/index.js",
+  "unpkg": "iot-agent.min.js",
+  "jsdelivr": "iot-agent.min.js",
+  "scripts": {
+    "lint": "npx eslint --ext js .",
+    "test:iotagent": "mocha --require @babel/register './src/test/iot-agent.spec.js'",
+    "test": "npm run test:iotagent",
+    "docs:iotagent": "jsdoc2md ./src/* > ./docs/api/README.md",
+    "docs:md": "npm run docs:iotagent",
+    "docs:dev": "npm run docs:md ; cp ./README.md ./docs/readme/. ; vuepress dev docs",
+    "docs:build": "npm run docs:md ; cp ./README.md ./docs/readme/. ; vuepress build docs",
+    "docs:serve": "light-server -s public -p 7000 --servePrefix /iot-agent/",
+    "lib:build": "npx babel src --out-dir dist --ignore './src/test/*.spec.js'",
+    "lib:build-min": "npx babel ./src --ignore './src/test/*.spec.js' --presets minify --out-file ./iot-agent.min.js",
+    "prePublish": "npm run lint; npm run test; npm run lib:build",
+    "example": "nodemon --exec babel-node ./examples/index.js"
+  },
+  "files": [
+    "dist/*",
+    "package.json",
+    "iot-agent.min.js",
+    "README.md"
+  ],
+  "author": "getlarge",
+  "keywords": [
+    "IoT",
+    "MQTT",
+    "Interoperability"
+  ],
+  "license": "ISC",
+  "engines": {
+    "node": ">=9.0.0",
+    "npm": ">=6.0.0"
+  },
+  "dependencies": {
+    "aloes-handlers": "^1.1.8",
+    "aloes-light-handlers": "^1.0.0",
+    "cayennelpp-handlers": "^1.0.0",
+    "mysensors-handlers": "^1.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.3.4",
+    "@babel/node": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/plugin-proposal-decorators": "^7.0.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.0.0",
+    "@babel/plugin-proposal-function-sent": "^7.0.0",
+    "@babel/plugin-proposal-json-strings": "^7.0.0",
+    "@babel/plugin-proposal-numeric-separator": "^7.0.0",
+    "@babel/plugin-proposal-throw-expressions": "^7.0.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/plugin-syntax-import-meta": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/register": "^7.0.0",
+    "acorn": "^6.1.0",
+    "async-mqtt": "^2.0.0",
+    "babel-eslint": "^8.2.6",
+    "babel-preset-minify": "^0.5.0",
+    "chai": "^4.2.0",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^11.3.0",
+    "eslint-config-prettier": "^3.1.0",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-prettier": "^2.6.2",
+    "identity-obj-proxy": "^3.0.0",
+    "jsdoc-to-markdown": "^4.0.1",
+    "light-server": "^2.6.0",
+    "mocha": "^5.2.0",
+    "mosca": "^2.8.3",
+    "nodemon": "^1.18.8",
+    "prettier": "1.16.1",
+    "vuepress": "^1.0.0-alpha.42"
+  },
+  "mocha.requires": [
+    "@babel/register"
+  ],
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ],
+    "plugins": [
+      "@babel/plugin-syntax-dynamic-import",
+      "@babel/plugin-syntax-import-meta",
+      "@babel/plugin-proposal-class-properties",
+      "@babel/plugin-proposal-json-strings",
+      [
+        "@babel/plugin-proposal-decorators",
+        {
+          "legacy": true
+        }
+      ],
+      "@babel/plugin-proposal-function-sent",
+      "@babel/plugin-proposal-export-namespace-from",
+      "@babel/plugin-proposal-numeric-separator",
+      "@babel/plugin-proposal-throw-expressions"
+    ]
+  },
+  "prettier": {
+    "bracketSpacing": false,
+    "singleQuote": true,
+    "printWidth": 80,
+    "trailingComma": "all"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "airbnb-base",
+      "prettier"
+    ],
+    "plugins": [
+      "babel"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2018,
+      "parser": "babel-eslint"
+    },
+    "rules": {
+      "import/no-unresolved": "off",
+      "import/extensions": "off",
+      "import/prefer-default-export": "off",
+      "no-param-reassign": "off",
+      "one-var-declaration-per-line": "off"
+    },
+    "globals": {
+      "require": true
+    }
+  },
+  "eslintIgnore": [
+    "/dist/",
+    "/public/",
+    "/docs/",
+    "/node_modules/",
+    "/src/test/*.spec.js",
+    "iot-agent.min.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://framagit.org/aloes/iot-agent"
+  }
+}
