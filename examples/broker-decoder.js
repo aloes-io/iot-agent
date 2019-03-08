@@ -2,7 +2,8 @@
 import mosca from 'mosca';
 import EventEmitter from 'events';
 import {aloesLightEncoder, aloesLightDecoder} from 'aloes-light-handlers';
-import {patternDetector, aloesClientEncoder} from '../src/index';
+import {aloesClientEncoder} from 'aloes-handlers';
+import {patternDetector} from '../src/index';
 import {AccessTokens, accounts, devices, sensors} from './initial-data';
 import {logger} from '../src/logger';
 

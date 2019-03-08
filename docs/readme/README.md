@@ -1,9 +1,17 @@
-# Aloes - Handlers
+# Aloes - IoT Agent
 
 - Encode / decode MQTT stream from IoT devices to Web browsers.
 - Use [Open Mobile Alliance](http://www.openmobilealliance.org/wp/OMNA/LwM2M/LwM2MRegistry.html) standards as main target / source protocol.
 
-[Full Docs](https://aloes.frama.io/aloes-handlers/)
+[Full Docs](https://aloes.frama.io/iot-agent/)
+
+Library depending on :
+
+- [Open Mobile Alliance](http://www.openmobilealliance.org/wp/OMNA/LwM2M/LwM2MRegistry.html)
+- [Aloes-handlers](https://www.npmjs.com/package/aloes-handlers)
+- [Aloes-light-handlers](https://framagit.org/aloes/aloes-light-handlers)
+- [MySensors-handlers](https://framagit.org/aloes/mysensors-handlers)
+- [CayenneLPP-handlers](https://framagit.org/aloes/cayennelpp-handlers)
 
 Next :
 
@@ -17,13 +25,13 @@ Next :
 With npm :
 
 ```bash
-$ npm install aloes-handlers --save
+$ npm install iot-agent --save
 ```
 
 Via script tag :
 
 ```html
-<script src="https://unpkg.com/aloes-handlers"></script>
+<script src="https://unpkg.com/iot-agent"></script>
 ```
 
 ## Linting

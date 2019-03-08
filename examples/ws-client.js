@@ -3,8 +3,9 @@
 
 import mqtt from 'async-mqtt';
 import EventEmitter from 'events';
+import {updateAloesSensors} from 'aloes-handlers';
 import {logger} from '../src/logger';
-import {patternDetector, updateAloesSensors} from '../src/index';
+import {patternDetector} from '../src/index';
 import {accounts, sensors} from './initial-data';
 
 // Mocking a web browser working on AloesClient protocol

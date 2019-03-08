@@ -21,7 +21,7 @@
   "opts": {
     "template": "templates/default",
     "encoding": "utf8",
-    "destination": "./jsdoc/",
+    "destination": "./docs/",
     "recurse": true,
     "tutorials": "examples"
   }
