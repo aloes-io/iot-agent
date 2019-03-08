@@ -120,7 +120,7 @@ const decode = (packet, protocol) => {
  */
 const encode = (packet, protocol) => {
   try {
-    logger(4, 'handlers', 'decode:req', protocol);
+    logger(4, 'handlers', 'encode:req', protocol);
     let encoded;
     if (!protocol.name || protocol.name === null) {
       return new Error('Error : No match found for topic');
@@ -134,6 +134,9 @@ const encode = (packet, protocol) => {
         break;
       case 'cayennelpp':
         encoded = cayenneDecoder(packet, protocol.params);
+        break;
+      case 'aloesclient':
+        encoded = JSON.parse(packet.payload);
         break;
       default:
         return new Error('Error : Unsupported protocol');

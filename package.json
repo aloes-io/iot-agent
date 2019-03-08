@@ -37,7 +37,7 @@
     "npm": ">=6.0.0"
   },
   "dependencies": {
-    "aloes-handlers": "^1.1.8",
+    "aloes-handlers": "^1.1.9",
     "aloes-light-handlers": "^1.0.0",
     "cayennelpp-handlers": "^1.0.0",
     "mysensors-handlers": "^1.0.0"
