@@ -7,8 +7,10 @@
   "jsdelivr": "iot-agent.min.js",
   "scripts": {
     "lint": "npx eslint --ext js .",
-    "test:iotagent": "mocha --require @babel/register './src/test/iot-agent.spec.js'",
-    "test": "npm run test:iotagent",
+    "test:decode": "export NODE_ENV=test; mocha --require @babel/register './src/test/decode.spec.js'",
+    "test:encode": "export NODE_ENV=test; mocha --require @babel/register './src/test/encode.spec.js'",
+    "test:app": "export NODE_ENV=test; mocha --require @babel/register './src/test/app.spec.js'",
+    "test": "npm run test:decode ; npm run test:encode ; npm run test:app",
     "docs:iotagent": "jsdoc2md ./src/* > ./docs/api/README.md",
     "docs:md": "npm run docs:iotagent",
     "docs:dev": "npm run docs:md ; cp ./README.md ./docs/readme/. ; vuepress dev docs",
@@ -17,7 +19,7 @@
     "lib:build": "npx babel src --out-dir dist --ignore './src/test/*.spec.js'",
     "lib:build-min": "npx babel ./src --ignore './src/test/*.spec.js' --presets minify --out-file ./iot-agent.min.js",
     "prePublish": "npm run lint; npm run test; npm run lib:build",
-    "example": "nodemon --exec babel-node ./examples/index.js"
+    "example": "export NODE_ENV=dev; nodemon --exec babel-node ./examples/index.js"
   },
   "files": [
     "dist/*",
@@ -37,10 +39,11 @@
     "npm": ">=6.0.0"
   },
   "dependencies": {
-    "aloes-handlers": "^1.1.9",
-    "aloes-light-handlers": "^1.0.0",
-    "cayennelpp-handlers": "^1.0.0",
-    "mysensors-handlers": "^1.0.0"
+    "aloes-handlers": "^1.2.0",
+    "aloes-light-handlers": "^1.0.2",
+    "cayennelpp-handlers": "^1.0.1",
+    "mqtt-pattern": "^1.2.0",
+    "mysensors-handlers": "^1.0.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
@@ -75,7 +78,7 @@
     "mosca": "^2.8.3",
     "nodemon": "^1.18.8",
     "prettier": "1.16.1",
-    "vuepress": "^1.0.0-alpha.42"
+    "vuepress": "^1.0.0-alpha.47"
   },
   "mocha.requires": [
     "@babel/register"

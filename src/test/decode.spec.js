@@ -1,7 +1,7 @@
 require('@babel/register');
 
 import {assert} from 'chai';
-import {patternDetector, decode, encode} from '../';
+import {patternDetector, decode} from '../';
 
 // collectionPattern: '+userId/+collectionName/+method',
 // instancePattern: '+userId/+collectionName/+method/+modelId',
@@ -15,7 +15,7 @@ describe('decode - test 1', () => {
         messageProtocol: 'aloesLight',
         devEui: '3322321',
         type: 3300,
-        nativeSensorId: 4,
+        nativeSensorId: '4',
         resource: 5700,
         resources: {'5700': 1},
         inputPath: `3322321-in/1/3300/4/5700`,
@@ -58,7 +58,7 @@ describe('decode - test 2', () => {
         messageProtocol: 'aloesLight',
         devEui: '3322321',
         type: 3306,
-        nativeSensorId: 4,
+        nativeSensorId: '4',
         resource: 5850,
         resources: {'5850': 1},
         inputPath: `3322321-in/1/3306/4/5850`,
@@ -101,8 +101,8 @@ describe('decode - test 3', () => {
         messageProtocol: 'mySensors',
         devEui: '3322321',
         type: 3300,
-        nativeNodeId: 3,
-        nativeSensorId: 4,
+        nativeNodeId: '3',
+        nativeSensorId: '4',
         nativeResource: 48,
         resource: 5700,
         resources: {'5700': 1},
@@ -141,12 +141,13 @@ describe('decode - test 4', () => {
     topic: '1/IoTAgent/PUT',
     payload: Buffer.from(
       JSON.stringify({
+        deviceId: '5c2657ad36bb1052f87cf417',
         transportProtocol: 'mySensors',
         messageProtocol: 'mySensors',
         devEui: '3322321',
         type: 3306,
-        nativeSensorId: 4,
-        nativeNodeId: 4,
+        nativeSensorId: '4',
+        nativeNodeId: '4',
         nativeResource: 2,
         resource: 5850,
         resources: {'5850': 5},
@@ -179,69 +180,51 @@ describe('decode - test 4', () => {
   });
 });
 
-describe('encode - test 1', () => {
+describe('decode - test 5', () => {
+  const topic = '5c635046e1fec60e6050e47b/IoTAgent/POST';
   const packet = {
-    topic: '1/IoTAgent/PUT',
+    //  topic: '1/IoTAgent/PUT/1',
+    topic:
+      '5c635046e1fec60e6050e47b/Unconfirmed Data Up/b827ebfffe6cc78d/03ff0001',
     payload: Buffer.from(
       JSON.stringify({
-        transportProtocol: 'mySensors',
-        messageProtocol: 'mySensors',
-        devEui: '3322321',
-        name:'test',
-        type: 3306,
-        nativeSensorId: 4,
-        nativeNodeId: 4,
-        nativeResource: 2,
-        nativeType: 2,
-        resource: 5850,
-        resources: {'5850': 5},
-        icons: [],
-        colors: {},
-        inputPath: `3322321-in/4/4/1/0/2`,
-        outputPath: `3322321-out/4/4/1/0/2`,
+        id: 1,
+        transportProtocol: 'loraWan',
+        messageProtocol: 'cayenneLPP',
+        type: 3200,
+        nativeType: '0',
+        resource: 5500,
+        resources: {'5500': 1},
+        nativeResource: 5500,
+        nativeSensorId: '12',
+        devAddr: '03ff0001',
         inPrefix: '-in',
         outPrefix: '-out',
-        value: 15,
-        frameCounter: 0,
-        lastSignal: 0,
+        value: '1',
+        packet: '800100ff0300000001461c02b695ac147a4a9d540334168034a58ac5',
       }),
     ),
   };
-  const keys = [
-    'name',
-    'devEui',
-    'transportProtocol',
-    'messageProtocol',
-    'nativeSensorId',
-    'nativeNodeId',
-    'nativeType',
-    'nativeResource',
-    'type',
-    'resource',
-    'resources',
-    'inputPath',
-    'outputPath',
-    'inPrefix',
-    'outPrefix',
-    'value',
-    'colors',
-    'frameCounter',
-    'icons',
-    'lastSignal',
-  ];
+
   const pattern = patternDetector(packet);
   const params = pattern.params;
-  const encoded = encode(packet, pattern);
+  params.method = 'POST';
+  params.appEui = '5c635046e1fec60e6050e47b';
+  const decoded = decode(packet, params);
 
   it('decoded should exist', () => {
-    assert.typeOf(encoded, 'object');
+    assert.typeOf(decoded, 'object');
   });
 
-  it('encoded should contain Sensor instance properties', () => {
-    assert.hasAllKeys(encoded, keys);
+  it('decoded payload should contain topic and payload properties', () => {
+    assert.hasAllKeys(decoded, ['topic', 'payload']);
   });
 
-  it(`encoded value should be 15`, () => {
-    assert.strictEqual(15, encoded.value);
+  it(`decoded payload packet should be 000c00`, () => {
+    assert.strictEqual('000c00', decoded.payload.packet);
+  });
+
+  it(`decoded topic should be ${topic}`, () => {
+    assert.strictEqual(topic, decoded.topic);
   });
 });
