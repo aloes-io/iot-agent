@@ -15,7 +15,7 @@ import {
   mySensorsEncoder,
   mySensorsPatternDetector,
 } from 'mysensors-handlers';
-import {logger} from './logger';
+import logger from 'aloes-logger';
 
 /**
  * MQTT Pattern API
@@ -93,7 +93,7 @@ const patternDetector = packet => {
       //   }
       //   return pattern;
       // }
-      logger(2, 'iot-agent', 'patternDetector:res', pattern);
+      logger(2, 'iot-agent', 'patternDetector:res', pattern.name);
       return pattern;
     }
     throw new Error('Missing payload or topic inside packet');
@@ -114,7 +114,7 @@ const patternDetector = packet => {
  */
 const encode = (packet, protocol) => {
   try {
-    logger(4, 'iot-agent', 'encode:req', protocol);
+    logger(4, 'iot-agent', 'encode:req', protocol.name);
     let encoded;
     if (!protocol.name || protocol.name === null) {
       throw new Error('Missing params');
@@ -136,8 +136,8 @@ const encode = (packet, protocol) => {
         throw new Error('Unsupported protocol');
       //  encoded = 'Protocol not supported yet';
     }
-    logger(4, 'iot-agent', 'encode:res', encoded);
     if (!encoded) throw new Error('No encoded message');
+    logger(4, 'iot-agent', 'encode:res', encoded.type);
     return encoded;
   } catch (error) {
     logger(4, 'iot-agent', 'encode:err', error);
@@ -161,10 +161,10 @@ const decode = (packet, protocol) => {
     }
     const instance = JSON.parse(packet.payload);
     const protocolKeys = Object.getOwnPropertyNames(protocol);
-    logger(4, 'iot-agent', 'decode:req', protocolKeys.length);
+    //  logger(4, 'iot-agent', 'decode:req', protocolKeys.length);
     let decoded = {};
     if (protocolKeys.length >= 3 || protocolKeys.length <= 5) {
-      logger(4, 'iot-agent', 'decode:req', instance);
+      logger(4, 'iot-agent', 'decode:req', instance.messageProtocol);
       switch (instance.messageProtocol.toLowerCase()) {
         case 'aloeslight':
           decoded = aloesLightEncoder(instance, protocol);
@@ -194,8 +194,8 @@ const decode = (packet, protocol) => {
             instance.transportProtocol,
           );
       }
-      logger(4, 'iot-agent', 'decode:res', decoded);
       if (!decoded) throw new Error('No decoded message');
+      logger(4, 'iot-agent', 'decode:res', decoded.topic);
       return decoded;
     }
     throw new Error('Unsupported protocol');
@@ -214,7 +214,6 @@ const decode = (packet, protocol) => {
  * @returns {object} encoded MQTT packet, {topic, payload}
  */
 const publish = options => {
-  logger(5, 'iot-agent', 'publish:req', options);
   if (options && options.data && options.pattern) {
     if (options.pattern.toLowerCase() === 'mysensors') {
       return mySensorsEncoder(options.data, options);

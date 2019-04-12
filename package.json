@@ -39,11 +39,12 @@
     "npm": ">=6.0.0"
   },
   "dependencies": {
-    "aloes-handlers": "^1.2.0",
-    "aloes-light-handlers": "^1.0.2",
-    "cayennelpp-handlers": "^1.0.1",
+    "aloes-handlers": "^1.2.1",
+    "aloes-light-handlers": "^1.0.3",
+    "aloes-logger": "^1.0.4",
+    "cayennelpp-handlers": "^1.0.2",
     "mqtt-pattern": "^1.2.0",
-    "mysensors-handlers": "^1.0.2"
+    "mysensors-handlers": "^1.0.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
