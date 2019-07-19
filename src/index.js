@@ -52,10 +52,10 @@ const patternDetector = packet => {
       if (packet.topic.split('/')[0] === '$SYS') return null;
       logger(2, 'iot-agent', 'patternDetector:req', packet.topic);
       pattern = aloesClientPatternDetector(packet);
-      if (pattern.name === 'empty') {
+      if (!pattern || pattern === null ||  pattern.name === 'empty') {
         pattern = mySensorsPatternDetector(packet);
       }
-      if (pattern.name === 'empty') {
+      if (!pattern || pattern === null || pattern.name === 'empty') {
         pattern = aloesLightPatternDetector(packet);
       }
       // if (
