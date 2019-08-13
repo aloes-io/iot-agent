@@ -52,8 +52,8 @@ describe('encode - MySensors - test 1', () => {
 });
 
 describe('encode -AloesLight - test 2', () => {
-  // "pattern": "+prefixedDevEui/+method/+omaObjectId/+sensorId/+ipsoResourceId",
-  let packet = {topic: 'AloesLight123-in/0/3306/2/5850', payload: '1'};
+  // "pattern": "+prefixedDevEui/+method/+omaObjectId/+nodeId/+sensorId/+ipsoResourceId",
+  let packet = {topic: 'AloesLight123-in/0/3306/1/2/5850', payload: '1'};
 
   const keys = [
     'name',
@@ -62,7 +62,7 @@ describe('encode -AloesLight - test 2', () => {
     'transportProtocol',
     'messageProtocol',
     'nativeSensorId',
-    // 'nativeNodeId',
+    'nativeNodeId',
     'nativeType',
     'nativeResource',
     'type',
@@ -79,6 +79,7 @@ describe('encode -AloesLight - test 2', () => {
     'frameCounter',
     'icons',
     'lastSignal',
+    'direction'
   ];
   const pattern = patternDetector(packet);
   const params = pattern.params;

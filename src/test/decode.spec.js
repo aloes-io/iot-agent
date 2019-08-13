@@ -16,10 +16,11 @@ describe('decode - test 1', () => {
         devEui: '3322321',
         type: 3300,
         nativeSensorId: '4',
+        nativeNodeId: '1',
         resource: 5700,
         resources: {'5700': 1},
-        inputPath: `3322321-in/1/3300/4/5700`,
-        outputPath: `3322321-out/1/3300/4/5700`,
+        inputPath: `3322321-in/1/3300/1/4/5700`,
+        outputPath: `3322321-out/1/3300/1/4/5700`,
         inPrefix: '-in',
         outPrefix: '-out',
         value: 5,
@@ -43,8 +44,8 @@ describe('decode - test 1', () => {
     assert.strictEqual(5, decoded.payload);
   });
 
-  it(`decoded topic should be 3322321-in/1/3300/4/5700`, () => {
-    assert.strictEqual('3322321-in/1/3300/4/5700', decoded.topic);
+  it(`decoded topic should be 3322321-in/1/3300/1/4/5700`, () => {
+    assert.strictEqual('3322321-in/1/3300/1/4/5700', decoded.topic);
   });
 });
 
@@ -59,10 +60,11 @@ describe('decode - test 2', () => {
         devEui: '3322321',
         type: 3306,
         nativeSensorId: '4',
+        nativeNodeId: '1',
         resource: 5850,
         resources: {'5850': 1},
-        inputPath: `3322321-in/1/3306/4/5850`,
-        outputPath: `3322321-out/1/3306/4/5850`,
+        inputPath: `3322321-in/1/3306/1/4/5850`,
+        outputPath: `3322321-out/1/3306/1/4/5850`,
         inPrefix: '-in',
         outPrefix: '-out',
         value: 10,
@@ -86,8 +88,8 @@ describe('decode - test 2', () => {
     assert.strictEqual(10, decoded.payload);
   });
 
-  it(`decoded topic should be 3322321-in/1/3306/4/5850`, () => {
-    assert.strictEqual('3322321-in/1/3306/4/5850', decoded.topic);
+  it(`decoded topic should be 3322321-in/1/3306/1/4/5850`, () => {
+    assert.strictEqual('3322321-in/1/3306/1/4/5850', decoded.topic);
   });
 });
 
