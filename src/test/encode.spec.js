@@ -11,7 +11,6 @@ describe('encode - MySensors - test 1', () => {
 
   const keys = [
     'name',
-    //  'deviceId',
     'devEui',
     'transportProtocol',
     'messageProtocol',
@@ -57,7 +56,6 @@ describe('encode -AloesLight - test 2', () => {
 
   const keys = [
     'name',
-    //  'deviceId',
     'devEui',
     'transportProtocol',
     'messageProtocol',
@@ -79,7 +77,7 @@ describe('encode -AloesLight - test 2', () => {
     'frameCounter',
     'icons',
     'lastSignal',
-    'direction'
+    'direction',
   ];
   const pattern = patternDetector(packet);
   const params = pattern.params;
@@ -122,6 +120,7 @@ describe('encode - CayenneLPP - test 3', () => {
           resource: 5500,
           resources: {'5500': 1},
           nativeResource: 5500,
+          nativeNodeId: '0',
           nativeSensorId: '12',
           devAddr: '03ff0001',
           inPrefix: '-in',

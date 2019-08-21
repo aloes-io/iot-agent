@@ -3,8 +3,6 @@
 <dl>
 <dt><a href="#module_IoTAgent">IoTAgent</a></dt>
 <dd></dd>
-<dt><a href="#module_logger">logger</a></dt>
-<dd></dd>
 </dl>
 
 ## External
@@ -163,17 +161,6 @@ Retrieve routing pattern from MQTT packet.topic and registered application
 | externalApp.pattern | <code>string</code> | External Application pattern  ( see mqtt pattern ). |
 | externalApp.status | <code>boolean</code> | Connection status |
 | externalApp.validators | <code>object</code> | User defined validation steps executed on pattern fields. |
-
-<a name="module_logger"></a>
-
-## logger
-
-| Param | Type | Description |
-| --- | --- | --- |
-| priority | <code>int</code> | Logger mode. |
-| collectionName | <code>string</code> | service name. |
-| command | <code>string</code> | service command to log. |
-| content | <code>string</code> | log content. |
 
 <a name="external_MQTT-pattern"></a>
 

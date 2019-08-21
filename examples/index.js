@@ -1,7 +1,7 @@
+import logger from 'aloes-logger';
 import {mqttBroker} from './broker-decoder';
 import {mqttClient} from './mqtt-client';
 import {wsClient} from './ws-client';
-import {logger} from '../src/logger';
 import {AccessTokens, accounts, devices} from './initial-data';
 
 const config = {
@@ -17,7 +17,7 @@ const config = {
 		port: 1883,
 		host: '0.0.0.0',
 		username: devices[0].id,
-		password: AccessTokens[0].id,
+		password: devices[0].apiKey,
 	},
 	wsClient: {
 		port: 3000,
@@ -51,9 +51,10 @@ wsClient.on('publish', (topic, payload) => {
 // 	});
 // });
 
-mqttBroker.emit('init', config);
-
 mqttBroker.on('ready', () => {
 	mqttClient.emit('init', config);
 	wsClient.emit('init', config);
 });
+
+mqttBroker.emit('init', config);
+

@@ -16,6 +16,7 @@ describe('detect app pattern - test 1', () => {
             messageProtocol: 'aloesLight',
             devEui: '3322321',
             type: 3300,
+            nativeNodeId: '0',
             nativeSensorId: '4',
             resource: 5700,
             resources: {'5700': 1},
@@ -116,6 +117,7 @@ describe('detect app pattern - test 2', () => {
             messageProtocol: 'aloesLight',
             devEui: '3322321',
             type: 3300,
+            nativeNodeId: '0',
             nativeSensorId: '4',
             resource: 5700,
             resources: {'5700': 1},
@@ -171,12 +173,7 @@ describe('detect app pattern - test 2', () => {
     id: '5c89375b8bbd1420cc2217b6',
     accountId: '5c24e1514a603a651d1ddfd5',
   };
-  const keys = [
-    'appEui',
-    'collection',
-    'transportProtocol',
-    'direction',
-  ];
+  const keys = ['appEui', 'collection', 'transportProtocol', 'direction'];
   const pattern = appPatternDetector(packet, externalApp);
   const params = pattern.params;
 
@@ -195,8 +192,7 @@ describe('detect app pattern - test 2', () => {
 
 describe('detect app pattern - test 3', () => {
   const packet = {
-    topic:
-      'testinvalid/invalidKey/ConfirmedRX',
+    topic: 'testinvalid/invalidKey/ConfirmedRX',
     payload: Buffer.from(
       JSON.stringify({
         message: {
@@ -206,6 +202,7 @@ describe('detect app pattern - test 3', () => {
             messageProtocol: 'aloesLight',
             devEui: '3322321',
             type: 3300,
+            nativeNodeId: '0',
             nativeSensorId: '4',
             resource: 5700,
             resources: {'5700': 1},
@@ -273,5 +270,3 @@ describe('detect app pattern - test 3', () => {
     assert.strictEqual(pattern.name, externalApp.name);
   });
 });
-
-

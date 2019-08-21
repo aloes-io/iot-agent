@@ -3,13 +3,13 @@
 
 import mqtt from 'async-mqtt';
 import EventEmitter from 'events';
-import {updateAloesSensors} from 'aloes-handlers';
-import {logger} from '../src/logger';
+// import {updateAloesSensors} from 'aloes-handlers';
+import logger from 'aloes-logger';
 import {patternDetector} from '../src/index';
 import {accounts, sensors} from './initial-data';
 
 // Mocking a web browser working on AloesClient protocol
-// '+userId/+collectionName/+method',
+// '+userId/+collection/+method',
 
 export const wsClient = new EventEmitter();
 let client;
@@ -32,7 +32,7 @@ wsClient.on('init', config => {
     return null;
   });
 
-  client.on('disconnect', state => {
+  client.on('offline', state => {
     delete wsClient.user;
     wsClient.emit('status', state);
   });
@@ -60,28 +60,34 @@ wsClient.on('message', async (topic, message) => {
 
     if (!pattern) return null;
     if (
-      pattern.name === 'aloesClient' &&
-      pattern.params.method === 'POST' &&
+      pattern.name.toLowerCase() === 'aloesclient' &&
+      (pattern.params.method === 'POST' || pattern.params.method === 'PUT') &&
       pattern.params.userId === accounts[0].id.toString() &&
-      pattern.params.collectionName === 'Sensor' &&
+      pattern.params.collection === 'Sensor' &&
       payload
     ) {
-      if (payload.resource === 5911 && payload.value) {
+      if (
+        payload.resource === 5910 &&
+        payload.resources['5910'] &&
+        sensors[1].id === payload.id.toString()
+      ) {
         //  update instance and send it to broker`,
-        const updatedSensor = await updateAloesSensors(
-          sensors[1],
-          Number(payload.resource),
-          payload.value,
-        );
+        logger(2, 'ws-client', 'image received from broker', payload.resource);
 
-        const newTopic = `${updatedSensor.devEui}-in/1/${updatedSensor.type}/${
-          updatedSensor.nativeSensorId
-        }/5911`;
+        // const updatedSensor = await updateAloesSensors(
+        //   sensors[1],
+        //   Number(payload.resource),
+        //   payload.resources['5911'],
+        // );
 
-        if (newTopic && updatedSensor && updatedSensor !== null) {
-          // await wsClient.emit('publish', newTopic, updatedSensor);
-          return client.publish(newTopic, payload.value.toString());
-        }
+        // const newTopic = `${updatedSensor.devEui}-in/1/${updatedSensor.type}/${
+        //   updatedSensor.nativeNodeId
+        // }/${updatedSensor.nativeSensorId}/5911`;
+
+        // if (newTopic && updatedSensor && updatedSensor !== null) {
+        //   // await wsClient.emit('publish', newTopic, updatedSensor);
+        //   return client.publish(newTopic, payload.value.toString());
+        // }
       }
     }
 

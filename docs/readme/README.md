@@ -73,16 +73,14 @@ $ npm run build-lib
 
 ## Example
 
-_/ Still buggy /_
-
 Simulating the use case where MQTT Broker is communicating with a browser and an example_device ( here a simulated camera ) :
 
-- Native Browser and Broker format is AloesClient
-  aloesClient_topic : `+userId/+collectionName/+method/#model`
+- Native Browser and Broker protocol is AloesClient
+  aloesClient_topic : `+userId/+collection/+method/#modelId`
   aloesClient_payload : `Object`
 
-- Native example_device format is AloesLight
-  aloesLight_topic : `+prefixedDevEui/+method/+omaObjectId/+sensorId/+omaResourceId`
+- Native example_device protocol is AloesLight
+  aloesLight_topic : `+prefixedDevEui/+method/+omaObjectId/+nodeId/+sensorId/+omaResourceId`
   aloesLight_payload : `String`
 
 - verifying which client is connecting and which accesses are granted
@@ -117,7 +115,7 @@ $ mqtt sub -t '2894413-out/1/3349/#' -h 'localhost' -p 1883 -u '5c2657ad36bb1052
 - by mocking a browser MQTT subscription ({aloesClient_topic} )
 
 ```bash
-$ mqtt sub -t '5c24e1514a603a651d1ddfd5/Sensor/POST' -h 'localhost' -p 1883 -u '5c24e1514a603a651d1ddfd5' -P 'DregdyAV9eE5WLQtUl82mVh6uzcYSsJjXx0Kf8TcXB7SSYRpysEJ1OfPuWUlNiyZ'
+$ mqtt sub -t '5c24e1514a603a651d1ddfd5/Sensor/#' -h 'localhost' -p 1883 -u '5c24e1514a603a651d1ddfd5' -P 'DregdyAV9eE5WLQtUl82mVh6uzcYSsJjXx0Kf8TcXB7SSYRpysEJ1OfPuWUlNiyZ'
 ```
 
 Example requesting a camera capture :
@@ -125,12 +123,12 @@ Example requesting a camera capture :
 - by mocking a device MQTT packet ({aloesLight_topic}{aloesLight_payload})
 
 ```bash
-$ mqtt pub -t '2894413-in/1/3349/2/5911' -h 'localhost' -p 1883 -m "1" -u '5c2657ad36bb1052f87cf417' -P 'ACSk0JG16GGBudI1CW4fYIYeVsUGTFOpyXxTckamKdznED1CGEBcYLLm7SrCNo6g'
+$ mqtt pub -t '2894413-in/1/3349/0/2/5911' -h 'localhost' -p 1883 -m "1" -u '5c2657ad36bb1052f87cf417' -P 'ACSk0JG16GGBudI1CW4fYIYeVsUGTFOpyXxTckamKdznED1CGEBcYLLm7SrCNo6g'
 ```
 
 - by mocking a browser MQTT packet ({aloesClient_topic}{aloesClient_payload} )
 
 ```bash
-$ mqtt pub -t '5c24e1514a603a651d1ddfd5/Sensor/POST' -h 'localhost' -p 1883 -m '{"id": "5c62c4de3c6d59223afdf891","name": "Bitmap", "type": 3349, "devEui": "2894413", "resources": { "5750": "app-name", "5910": null, "5911": true, "5912": "" }, "value": true, "resource": 5911, "frameCounter": 248, "transportProtocol": "aloesLight", "messageProtocol": "aloesLight", "protocolVersion": "", "nativeSensorId": "2", "nativeNodeId": "", "nativeType": 3349, "nativeResource": 5910, "accountId": "5c24e1514a603a651d1ddfd5", "deviceId": "5c2657ad36bb1052f87cf417", "inPrefix": "-in", "outPrefix": "-out"}' -u '5c24e1514a603a651d1ddfd5' -P 'DregdyAV9eE5WLQtUl82mVh6uzcYSsJjXx0Kf8TcXB7SSYRpysEJ1OfPuWUlNiyZ'
+$ mqtt pub -t '5c24e1514a603a651d1ddfd5/Sensor/PUT/5c62c4de3c6d59223afdf891' -h 'localhost' -p 1883 -m '{"id": "5c62c4de3c6d59223afdf891","name": "Bitmap", "type": 3349, "devEui": "2894413", "resources": { "5750": "app-name", "5910": null, "5911": true, "5912": "" }, "value": "1", "resource": 5911, "frameCounter": 248, "transportProtocol": "aloesLight", "transportProtocolVersion": "1", "messageProtocol": "aloesLight", "messageProtocolVersion": "1", "nativeSensorId": "2", "nativeNodeId": "0", "nativeType": 3349, "nativeResource": 5910, "accountId": "5c24e1514a603a651d1ddfd5", "deviceId": "5c2657ad36bb1052f87cf417", "inPrefix": "-in", "outPrefix": "-out"}' -u '5c24e1514a603a651d1ddfd5' -P 'DregdyAV9eE5WLQtUl82mVh6uzcYSsJjXx0Kf8TcXB7SSYRpysEJ1OfPuWUlNiyZ'
 
 ```

@@ -1,17 +1,16 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable import/no-extraneous-dependencies */
-
 import mqtt from 'async-mqtt';
 import EventEmitter from 'events';
 import fs from 'fs';
 import path from 'path';
+import logger from 'aloes-logger';
 import {promisify} from 'util';
-import {logger} from '../src/logger';
 import {patternDetector} from '../src/index';
 import {devices} from './initial-data';
 
 // Mocking a camera device working on AloesLight protocol
-// ('+prefixedDevEui/+method/+omaObjectId/+sensorId/+omaResourceId')
+// ('+prefixedDevEui/+method/+omaObjectId/+nodeId/+sensorId/+omaResourceId')
 
 const readFile = promisify(fs.readFile);
 
@@ -31,13 +30,14 @@ mqttClient.on('init', config => {
     mqttClient.user = client._client.options.username;
     mqttClient.devEui = client._client.options.devEui;
     if (client && mqttClient.user) {
-      await client.subscribe(`${devices[0].devEui}-in/+/+/+/+`);
+      await client.subscribe(`${devices[0].devEui}-in/+/+/+/+/+`);
     }
-    await client.publish(`${devices[0].devEui}-out/0/3306/1/5850`, '1');
-    return client.publish(`${devices[0].devEui}-out/0/3349/2/5910`, '1');
+    // await client.publish(`${devices[0].devEui}-out/0/3306/0/1/5850`, '1');
+    // return client.publish(`${devices[0].devEui}-out/0/3349/0/2/5910`, '1');
+    return state;
   });
 
-  client.on('disconnect', state => {
+  client.on('offline', state => {
     delete mqttClient.user;
     delete mqttClient.devEui;
     mqttClient.emit('status', state);
@@ -58,26 +58,30 @@ mqttClient.on('init', config => {
 
 mqttClient.on('message', async (topic, message) => {
   try {
-    const payload = JSON.parse(message);
+    // const payload = JSON.parse(message);
+    const payload = message.toString();
     const packet = {topic, payload};
     const pattern = await patternDetector(packet);
-    logger(4, 'mqtt-client', 'onMessage:req1', {pattern});
-    //       2894413-in/1/3349/2/5911
+    logger(4, 'mqtt-client', 'onMessage:req', {pattern});
     if (!pattern) return null;
     if (
-      pattern.name === 'aloesLight' &&
+      pattern.name.toLowerCase() === 'aloeslight' &&
       pattern.params.method === '1' &&
       pattern.params.omaObjectId === '3349' &&
       pattern.params.omaResourceId === '5911' &&
+      pattern.params.nodeId === '0' &&
       pattern.params.sensorId === '2' &&
       payload
     ) {
+      // topic =  2894413-in/1/3349/0/2/5911
+      logger(2, 'mqtt-client', 'image request from broker', payload);
+
       const img = await readFile(`${path.resolve('.')}/src/assets/feuer.png`);
 
       if (img && img instanceof Buffer) {
         const newTopic = `${devices[0].devEui}-out/1/${
           pattern.params.omaObjectId
-        }/${pattern.params.sensorId}/5910`;
+        }/${pattern.params.nodeId}/${pattern.params.sensorId}/5910`;
         //  await mqttClient.emit('publish', newTopic, img);
         return client.publish(newTopic, img);
       }

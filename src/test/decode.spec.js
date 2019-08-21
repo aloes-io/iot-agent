@@ -198,6 +198,7 @@ describe('decode - test 5', () => {
         resource: 5500,
         resources: {'5500': 1},
         nativeResource: 5500,
+        nativeNodeId: '0',
         nativeSensorId: '12',
         devAddr: '03ff0001',
         inPrefix: '-in',
