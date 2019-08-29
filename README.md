@@ -68,7 +68,8 @@ $ npm run docs:serve
 With Babel
 
 ```bash
-$ npm run build-lib
+$ npm run lib:build
+$ npm run lib:build-min
 ```
 
 ## Example

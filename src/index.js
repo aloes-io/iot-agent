@@ -52,7 +52,7 @@ const patternDetector = packet => {
       if (packet.topic.split('/')[0] === '$SYS') return null;
       logger(2, 'iot-agent', 'patternDetector:req', packet.topic);
       pattern = aloesClientPatternDetector(packet);
-      if (!pattern || pattern === null ||  pattern.name === 'empty') {
+      if (!pattern || pattern === null || pattern.name === 'empty') {
         pattern = mySensorsPatternDetector(packet);
       }
       if (!pattern || pattern === null || pattern.name === 'empty') {
@@ -130,7 +130,11 @@ const encode = (packet, protocol) => {
         encoded = cayenneDecoder(packet, protocol.params);
         break;
       case 'aloesclient':
-        encoded = JSON.parse(packet.payload);
+        if (typeof packet.payload === 'string') {
+          encoded = JSON.parse(packet.payload);
+        } else {
+          encoded = packet.payload;
+        }
         break;
       default:
         throw new Error('Unsupported protocol');

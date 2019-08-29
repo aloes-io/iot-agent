@@ -39,8 +39,8 @@
     "npm": ">=6.0.0"
   },
   "dependencies": {
-    "aloes-handlers": "^1.2.10",
-    "aloes-light-handlers": "^1.0.5",
+    "aloes-handlers": "^1.2.11",
+    "aloes-light-handlers": "^1.0.6",
     "aloes-logger": "^1.0.4",
     "cayennelpp-handlers": "^1.0.2",
     "mqtt-pattern": "^1.2.0",
