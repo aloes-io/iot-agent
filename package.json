@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "aloes-handlers": "^1.2.11",
-    "aloes-light-handlers": "^1.0.6",
+    "aloes-light-handlers": "^1.0.7",
     "aloes-logger": "^1.0.4",
     "cayennelpp-handlers": "^1.0.2",
     "mqtt-pattern": "^1.2.0",
