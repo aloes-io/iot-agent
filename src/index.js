@@ -1,21 +1,43 @@
-import mqttPattern from 'mqtt-pattern';
-import {aloesClientEncoder, aloesClientPatternDetector} from 'aloes-handlers';
-import {
+/*  
+Aloes iot-agent is a message encoder/decoder compatible with aloes ecosystem.
+
+Copyright 2019 Edouard Maleix
+
+Aloes iot-agent is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ any later version.
+
+Aloes iot-agent is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Aloes iot-agent. If not, see <https://www.gnu.org/licenses/>.
+*/
+
+const mqttPattern = require('mqtt-pattern');
+const {
+  aloesClientEncoder,
+  aloesClientPatternDetector,
+} = require('aloes-handlers');
+const {
   aloesLightPatternDetector,
   aloesLightEncoder,
   aloesLightDecoder,
-} from 'aloes-light-handlers';
-import {
-  //  cayennePatternDetector,
+} = require('aloes-light-handlers');
+const {
+  cayennePatternDetector,
   cayenneEncoder,
   cayenneDecoder,
-} from 'cayennelpp-handlers';
-import {
+} = require('cayennelpp-handlers');
+const {
   mySensorsDecoder,
   mySensorsEncoder,
   mySensorsPatternDetector,
-} from 'mysensors-handlers';
-import logger from 'aloes-logger';
+} = require('mysensors-handlers');
+const logger = require('aloes-logger');
 
 /**
  * MQTT Pattern API
@@ -58,48 +80,20 @@ const patternDetector = packet => {
       if (!pattern || pattern === null || pattern.name === 'empty') {
         pattern = aloesLightPatternDetector(packet);
       }
-      // if (
-      //   pattern.name === 'empty' &&
-      //   typeof packet.payload === 'object' &&
-      //   packet.payload instanceof Buffer
-      // ) {
-      //   //  pattern = cayennePatternDetector(packet);
-      //   const parsedPayload = JSON.parse(packet.payload);
-      //   let loraPacket;
-      //   if (parsedPayload) {
-      //     if (parsedPayload.packet) {
-      //       loraPacket = Buffer.from(parsedPayload.packet, 'hex');
-      //     } else if (parsedPayload.message) {
-      //       if (
-      //         parsedPayload.message.sensor &&
-      //         parsedPayload.message.sensor.packet
-      //       ) {
-      //         loraPacket = Buffer.from(
-      //           parsedPayload.message.sensor.packet,
-      //           'hex',
-      //         );
-      //       } else if (
-      //         parsedPayload.message.node &&
-      //         parsedPayload.message.node.packet
-      //       ) {
-      //         loraPacket = Buffer.from(
-      //           parsedPayload.message.node.packet,
-      //           'hex',
-      //         );
-      //       }
-      //     }
-      //     if (!loraPacket) return pattern;
-      //     pattern = cayennePatternDetector(loraPacket);
-      //   }
-      //   return pattern;
-      // }
+      if (
+        pattern.name === 'empty' &&
+        typeof packet.payload === 'object' &&
+        packet.payload instanceof Buffer
+      ) {
+        pattern = cayennePatternDetector(packet.payload);
+      }
       logger(2, 'iot-agent', 'patternDetector:res', pattern.name);
       return pattern;
     }
     throw new Error('Missing payload or topic inside packet');
   } catch (error) {
     logger(2, 'iot-agent', 'patternDetector:err', error);
-    return error;
+    return null;
   }
 };
 
@@ -110,7 +104,7 @@ const patternDetector = packet => {
  * @param {object} packet - Incoming MQTT packet.
  * @param {object} protocol - Protocol paramters ( coming from patternDetector ).
  * @param {string} protocol.pattern - transportProtocol
- * @returns {object} composed instance
+ * @returns {object | object[]} composed instance(s)
  */
 const encode = (packet, protocol) => {
   try {
@@ -127,7 +121,7 @@ const encode = (packet, protocol) => {
         encoded = aloesLightDecoder(packet, protocol.params);
         break;
       case 'cayennelpp':
-        encoded = cayenneDecoder(packet, protocol.params);
+        encoded = cayenneDecoder(packet.payload, protocol.params);
         break;
       case 'aloesclient':
         if (typeof packet.payload === 'string') {
@@ -141,11 +135,11 @@ const encode = (packet, protocol) => {
       //  encoded = 'Protocol not supported yet';
     }
     if (!encoded) throw new Error('No encoded message');
-    logger(4, 'iot-agent', 'encode:res', encoded.type);
+    logger(4, 'iot-agent', 'encode:res', encoded);
     return encoded;
   } catch (error) {
     logger(4, 'iot-agent', 'encode:err', error);
-    return error;
+    return null;
   }
 };
 
@@ -168,7 +162,7 @@ const decode = (packet, protocol) => {
     //  logger(4, 'iot-agent', 'decode:req', protocolKeys.length);
     let decoded = {};
     if (protocolKeys.length >= 3 || protocolKeys.length <= 5) {
-      logger(4, 'iot-agent', 'decode:req', instance.messageProtocol);
+      // logger(4, 'iot-agent', 'decode:req', instance.messageProtocol);
       switch (instance.messageProtocol.toLowerCase()) {
         case 'aloeslight':
           decoded = aloesLightEncoder(instance, protocol);
@@ -178,14 +172,14 @@ const decode = (packet, protocol) => {
           break;
         case 'cayennelpp':
           //  decoded = cayenneEncoder(instance, protocol);
-          decoded.payload = instance;
-          decoded.payload.packet = cayenneEncoder(instance).toString('hex');
-          //  decoded.topic = `${protocol.appEui}/IoTAgent/${protocol.method}`;
+          // decoded.payload = instance;
+          decoded.payload = cayenneEncoder(instance).toString('hex');
           break;
         default:
         //  throw new Error('Unsupported protocol');
         //  decoded = 'Protocol not supported yet';
       }
+
       switch (instance.transportProtocol.toLowerCase()) {
         case 'lorawan':
           decoded.topic = `${protocol.appEui}/IoTAgent/${protocol.method}`;
@@ -205,7 +199,7 @@ const decode = (packet, protocol) => {
     throw new Error('Unsupported protocol');
   } catch (error) {
     logger(4, 'iot-agent', 'decode:err', error);
-    return error;
+    return null;
   }
 };
 
@@ -226,11 +220,17 @@ const publish = options => {
     } else if (options.pattern.toLowerCase() === 'aloesclient') {
       return aloesClientEncoder(options);
     } else if (options.pattern.toLowerCase() === 'cayennelpp') {
-      return cayenneEncoder(options);
+      const protocol = options.pattern.params;
+      return {
+        topic: `${protocol.appEui}/IoTAgent/${protocol.method}`,
+        payload: cayenneEncoder(options),
+      };
     }
     throw new Error('Protocol not supported yet');
   }
-  throw new Error('Option must be an object type');
+  throw new Error(
+    'Option must be an object type with data & pattern protoperties',
+  );
 };
 
 /**
@@ -280,7 +280,7 @@ const transformProtocolKey = (transformation, param) => {
     logger(4, 'iot-agent', 'transformProtocolKey:res', param);
     return param;
   } catch (error) {
-    return false;
+    return null;
   }
 };
 
@@ -426,7 +426,7 @@ const appPatternValidator = (externalApp, parsedProtocol) => {
     logger(4, 'iot-agent', 'appPatternValidator:res', patternValidators);
     return patternValidators;
   } catch (error) {
-    return error;
+    return null;
   }
 };
 
@@ -517,7 +517,7 @@ const appPatternDetector = (packet, externalApp) => {
     throw new Error('Missing payload or topic inside packet');
   } catch (error) {
     logger(2, 'iot-agent', 'appPatternDetector:err', error);
-    return error;
+    return null;
   }
 };
 

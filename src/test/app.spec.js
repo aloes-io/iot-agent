@@ -1,7 +1,7 @@
-require('@babel/register');
+/* Copyright 2019 Edouard Maleix, read LICENSE */
 
-import {assert} from 'chai';
-import {appPatternDetector} from '../';
+const {assert} = require('chai');
+const {appPatternDetector} = require('../');
 
 describe('detect app pattern - test 1', () => {
   const packet = {

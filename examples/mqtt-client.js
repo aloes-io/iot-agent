@@ -1,20 +1,23 @@
+/* Copyright 2019 Edouard Maleix, read LICENSE */
+
 /* eslint-disable no-underscore-dangle */
-/* eslint-disable import/no-extraneous-dependencies */
-import mqtt from 'async-mqtt';
-import EventEmitter from 'events';
-import fs from 'fs';
-import path from 'path';
-import logger from 'aloes-logger';
-import {promisify} from 'util';
-import {patternDetector} from '../src/index';
-import {devices} from './initial-data';
+const mqtt = require('async-mqtt');
+const EventEmitter = require('events');
+const fs = require('fs');
+const path = require('path');
+const logger = require('aloes-logger');
+const {promisify} = require('util');
+const {patternDetector} = require('../src/index');
+const {devices} = require('./initial-data');
 
 // Mocking a camera device working on AloesLight protocol
 // ('+prefixedDevEui/+method/+omaObjectId/+nodeId/+sensorId/+omaResourceId')
 
 const readFile = promisify(fs.readFile);
 
-export const mqttClient = new EventEmitter();
+const mqttClient = new EventEmitter();
+module.exports = mqttClient;
+
 let client;
 
 mqttClient.on('init', config => {
@@ -51,7 +54,7 @@ mqttClient.on('init', config => {
       return mqttClient.emit('message', topic, message);
     } catch (error) {
       logger(4, 'mqtt-client', 'publish:err', error);
-      return error;
+      return null;
     }
   });
 });
@@ -90,6 +93,6 @@ mqttClient.on('message', async (topic, message) => {
     logger(4, 'mqtt-client', 'onMessage:res', {pattern});
     return null;
   } catch (error) {
-    return error;
+    return null;
   }
 });

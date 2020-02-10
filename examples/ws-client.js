@@ -1,17 +1,20 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable import/no-extraneous-dependencies */
+/* Copyright 2019 Edouard Maleix, read LICENSE */
 
-import mqtt from 'async-mqtt';
-import EventEmitter from 'events';
-// import {updateAloesSensors} from 'aloes-handlers';
-import logger from 'aloes-logger';
-import {patternDetector} from '../src/index';
-import {accounts, sensors} from './initial-data';
+/* eslint-disable no-underscore-dangle */
+
+const mqtt = require('async-mqtt');
+const EventEmitter = require('events');
+// const {updateAloesSensors} = require('aloes-handlers';
+const logger = require('aloes-logger');
+const {patternDetector} = require('../src/index');
+const {accounts, sensors} = require('./initial-data');
 
 // Mocking a web browser working on AloesClient protocol
 // '+userId/+collection/+method',
 
-export const wsClient = new EventEmitter();
+const wsClient = new EventEmitter();
+module.exports = wsClient;
+
 let client;
 
 wsClient.on('init', config => {
@@ -45,7 +48,7 @@ wsClient.on('init', config => {
       return wsClient.emit('message', topic, message);
     } catch (error) {
       logger(4, 'ws-client', 'publish:err', error);
-      return error;
+      return null;
     }
   });
 });
@@ -94,6 +97,6 @@ wsClient.on('message', async (topic, message) => {
     logger(4, 'ws-client', 'onMessage:res', {pattern});
     return null;
   } catch (error) {
-    return error;
+    return null;
   }
 });

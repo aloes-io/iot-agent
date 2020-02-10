@@ -1,17 +1,20 @@
-/* eslint-disable import/no-extraneous-dependencies */
-import aedes from 'aedes';
-import net from 'net';
-import http from 'http';
-import ws from 'websocket-stream';
-import EventEmitter from 'events';
-import {aloesLightEncoder, aloesLightDecoder} from 'aloes-light-handlers';
-import {aloesClientEncoder} from 'aloes-handlers';
-import logger from 'aloes-logger';
-import {patternDetector} from '../src/index';
-import {AccessTokens, accounts, devices, sensors} from './initial-data';
+/* Copyright 2019 Edouard Maleix, read LICENSE */
 
-export const mqttBroker = new EventEmitter();
+const aedes = require('aedes');
+const net = require('net');
+const http = require('http');
+const ws = require('websocket-stream');
+const EventEmitter = require('events');
+const {aloesLightEncoder, aloesLightDecoder} = require('aloes-light-handlers');
+const {aloesClientEncoder} = require('aloes-handlers');
+const logger = require('aloes-logger');
+const {patternDetector} = require('../src/index');
+const {AccessTokens, accounts, devices, sensors} = require('./initial-data');
+
 let aedesBroker;
+
+const mqttBroker = new EventEmitter();
+module.exports = mqttBroker;
 
 mqttBroker.on('init', config => {
   aedesBroker = new aedes.Server({
@@ -150,7 +153,7 @@ mqttBroker.on('init', config => {
       return cb(null);
     } catch (error) {
       cb(error, null);
-      return error;
+      return null;
     }
   };
 
@@ -202,7 +205,7 @@ mqttBroker.on('init', config => {
       return cb(null, sub);
     } catch (error) {
       cb(error, null);
-      return error;
+      return null;
     }
   };
 
@@ -244,7 +247,7 @@ mqttBroker.on('init', config => {
       return null;
     } catch (error) {
       logger(2, 'mqtt-broker', 'onPublish:err', error);
-      return error;
+      return null;
     }
   });
 
@@ -265,7 +268,7 @@ mqttBroker.on('publish', async packet => {
     return aedesBroker.publish(packet);
   } catch (error) {
     logger(2, 'mqtt-broker', 'publish:err', error);
-    return error;
+    return null;
   }
 });
 

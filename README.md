@@ -28,12 +28,6 @@ With npm :
 $ npm install iot-agent --save
 ```
 
-Via script tag :
-
-```html
-<script src="https://unpkg.com/iot-agent"></script>
-```
-
 ## Linting
 
 With ESLint
@@ -61,15 +55,6 @@ $ npm run docs:dev
 ```bash
 $ npm run docs:build
 $ npm run docs:serve
-```
-
-## Build
-
-With Babel
-
-```bash
-$ npm run lib:build
-$ npm run lib:build-min
 ```
 
 ## Example

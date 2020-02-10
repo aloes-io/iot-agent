@@ -19,7 +19,7 @@
 
 * [IoTAgent](#module_IoTAgent)
     * [.patternDetector(packet)](#module_IoTAgent.patternDetector) ⇒ <code>object</code>
-    * [.encode(packet, protocol)](#module_IoTAgent.encode) ⇒ <code>object</code>
+    * [.encode(packet, protocol)](#module_IoTAgent.encode) ⇒ <code>object</code> \| <code>Array.&lt;object&gt;</code>
     * [.decode(packet, protocol)](#module_IoTAgent.decode) ⇒ <code>object</code>
     * [.publish(options)](#module_IoTAgent.publish) ⇒ <code>object</code>
     * [.ruleIsValid(rule)](#module_IoTAgent.ruleIsValid) ⇒ <code>boolean</code>
@@ -43,11 +43,11 @@ Retrieve routing pattern from MQTT packet.topic and supported IoT protocols
 
 <a name="module_IoTAgent.encode"></a>
 
-### IoTAgent.encode(packet, protocol) ⇒ <code>object</code>
+### IoTAgent.encode(packet, protocol) ⇒ <code>object</code> \| <code>Array.&lt;object&gt;</code>
 Encode IoT native protocol incoming data to Aloes Client protocol
 
 **Kind**: static method of [<code>IoTAgent</code>](#module_IoTAgent)  
-**Returns**: <code>object</code> - composed instance  
+**Returns**: <code>object</code> \| <code>Array.&lt;object&gt;</code> - composed instance(s)  
 
 | Param | Type | Description |
 | --- | --- | --- |

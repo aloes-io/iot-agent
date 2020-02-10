@@ -1,7 +1,7 @@
-require('@babel/register');
+/* Copyright 2019 Edouard Maleix, read LICENSE */
 
-import {assert} from 'chai';
-import {patternDetector, decode} from '../';
+const {assert} = require('chai');
+const {patternDetector, decode} = require('../');
 
 // collectionPattern: '+userId/+collectionName/+method',
 // instancePattern: '+userId/+collectionName/+method/+modelId',
@@ -224,7 +224,7 @@ describe('decode - test 5', () => {
   });
 
   it(`decoded payload packet should be 000c00`, () => {
-    assert.strictEqual('000c00', decoded.payload.packet);
+    assert.strictEqual('000c00', decoded.payload);
   });
 
   it(`decoded topic should be ${topic}`, () => {
