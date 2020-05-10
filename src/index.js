@@ -65,32 +65,32 @@ const logger = require('aloes-logger');
  * Retrieve routing pattern from MQTT packet.topic and supported IoT protocols
  * @static
  * @param {object} packet - The MQTT packet.
- * @returns {object} found pattern.name and pattern.params
+ * @returns {object | null} found pattern.name and pattern.params
  */
-const patternDetector = packet => {
+const patternDetector = (packet) => {
   try {
-    if (packet.payload && packet.topic) {
-      let pattern = {name: 'empty', params: {}};
-      if (packet.topic.split('/')[0] === '$SYS') return null;
-      logger(2, 'iot-agent', 'patternDetector:req', packet.topic);
-      pattern = aloesClientPatternDetector(packet);
-      if (!pattern || pattern === null || pattern.name === 'empty') {
-        pattern = mySensorsPatternDetector(packet);
-      }
-      if (!pattern || pattern === null || pattern.name === 'empty') {
-        pattern = aloesLightPatternDetector(packet);
-      }
-      if (
-        pattern.name === 'empty' &&
-        typeof packet.payload === 'object' &&
-        packet.payload instanceof Buffer
-      ) {
-        pattern = cayennePatternDetector(packet.payload);
-      }
-      logger(2, 'iot-agent', 'patternDetector:res', pattern.name);
-      return pattern;
+    if (!packet || !packet.payload || !packet.topic) {
+      throw new Error('Missing payload and/or topic inside packet');
     }
-    throw new Error('Missing payload or topic inside packet');
+    let pattern = {name: 'empty', params: {}};
+    if (packet.topic.split('/')[0] === '$SYS') return null;
+    logger(2, 'iot-agent', 'patternDetector:req', packet.topic);
+    pattern = aloesClientPatternDetector(packet);
+    if (!pattern || pattern === null || pattern.name === 'empty') {
+      pattern = mySensorsPatternDetector(packet);
+    }
+    if (!pattern || pattern === null || pattern.name === 'empty') {
+      pattern = aloesLightPatternDetector(packet);
+    }
+    if (
+      pattern.name === 'empty' &&
+      typeof packet.payload === 'object' &&
+      packet.payload instanceof Buffer
+    ) {
+      pattern = cayennePatternDetector(packet.payload);
+    }
+    logger(2, 'iot-agent', 'patternDetector:res', pattern.name);
+    return pattern;
   } catch (error) {
     logger(2, 'iot-agent', 'patternDetector:err', error);
     return null;
@@ -104,13 +104,13 @@ const patternDetector = packet => {
  * @param {object} packet - Incoming MQTT packet.
  * @param {object} protocol - Protocol paramters ( coming from patternDetector ).
  * @param {string} protocol.pattern - transportProtocol
- * @returns {object | object[]} composed instance(s)
+ * @returns {object | object[] | null} composed instance(s)
  */
 const encode = (packet, protocol) => {
   try {
     logger(4, 'iot-agent', 'encode:req', protocol.name);
     let encoded;
-    if (!protocol.name || protocol.name === null) {
+    if (!protocol.name) {
       throw new Error('Missing params');
     }
     switch (protocol.name.toLowerCase()) {
@@ -149,7 +149,7 @@ const encode = (packet, protocol) => {
  * @static
  * @param {object} packet - Incoming MQTT packet.
  * @param {object} protocol - Protocol paramters ( coming from patternDetector ).
- * @returns {object} packet - { topic, payload }
+ * @returns {object | null} packet - { topic, payload }
  */
 const decode = (packet, protocol) => {
   try {
@@ -209,9 +209,11 @@ const decode = (packet, protocol) => {
  * @param {object} options - data being the instance, pattern being the description of the source protocol
  * @param {string} options.pattern - transportProtocol
  * @param {any} options.data - packet.payload to publish
+ * @throws {Error} 'Option must be an object type with data & pattern protoperties'
+ * @throws {Error} 'Protocol not supported yet'
  * @returns {object} encoded MQTT packet, {topic, payload}
  */
-const publish = options => {
+const publish = (options) => {
   if (options && options.data && options.pattern) {
     if (options.pattern.toLowerCase() === 'mysensors') {
       return mySensorsEncoder(options.data, options);
@@ -240,7 +242,7 @@ const publish = options => {
  * @param {object} rule - MQTT pattern validator.
  * @returns {boolean}
  */
-const ruleIsValid = rule =>
+const ruleIsValid = (rule) =>
   Object.prototype.hasOwnProperty.call(rule, 'operation') &&
   Object.prototype.hasOwnProperty.call(rule, 'value') &&
   Object.prototype.hasOwnProperty.call(rule, 'field') &&
@@ -264,14 +266,14 @@ const transformProtocolKey = (transformation, param) => {
         if (typeof param === 'string') {
           param = param.toLowerCase();
         } else if (param instanceof Array) {
-          param = param.map(key => key.toLowerCase());
+          param = param.map((key) => key.toLowerCase());
         }
         break;
       case 'uppercase':
         if (typeof param === 'string') {
           param = param.toUpperCase();
         } else if (param instanceof Array) {
-          param = param.map(key => key.toUpperCase());
+          param = param.map((key) => key.toUpperCase());
         }
         break;
       default:
@@ -314,10 +316,10 @@ const validateProtocolKey = (operation, ruleValues, param) => {
           isValid = param.startsWith(ruleValues[0].trim());
         } else if (ruleValues.length > 1) {
           if (typeof param === 'string') {
-            isValid = ruleValues.some(val => param.startsWith(val.trim()));
+            isValid = ruleValues.some((val) => param.startsWith(val.trim()));
           } else if (param instanceof Array) {
-            isValid = ruleValues.some(val =>
-              param.filter(par => par.startsWith(val.trim())),
+            isValid = ruleValues.some((val) =>
+              param.filter((par) => par.startsWith(val.trim())),
             );
           }
         }
@@ -327,10 +329,10 @@ const validateProtocolKey = (operation, ruleValues, param) => {
           isValid = param.endsWith(ruleValues[0].trim());
         } else if (ruleValues.length > 1) {
           if (typeof param === 'string') {
-            isValid = ruleValues.some(val => param.endsWith(val.trim()));
+            isValid = ruleValues.some((val) => param.endsWith(val.trim()));
           } else if (param instanceof Array) {
-            isValid = ruleValues.some(val =>
-              param.filter(par => par.endsWith(val.trim())),
+            isValid = ruleValues.some((val) =>
+              param.filter((par) => par.endsWith(val.trim())),
             );
           }
         }
@@ -340,10 +342,10 @@ const validateProtocolKey = (operation, ruleValues, param) => {
           isValid = param === ruleValues[0].trim();
         } else if (ruleValues.length > 1) {
           if (typeof param === 'string') {
-            isValid = ruleValues.some(val => param === val.trim());
+            isValid = ruleValues.some((val) => param === val.trim());
           } else if (param instanceof Array) {
-            isValid = ruleValues.some(val =>
-              param.filter(par => par === val.trim()),
+            isValid = ruleValues.some((val) =>
+              param.filter((par) => par === val.trim()),
             );
           }
         }
@@ -353,10 +355,10 @@ const validateProtocolKey = (operation, ruleValues, param) => {
           isValid = param.includes(ruleValues[0].trim());
         } else if (ruleValues.length > 1) {
           if (typeof param === 'string') {
-            isValid = ruleValues.some(val => param.includes(val.trim()));
+            isValid = ruleValues.some((val) => param.includes(val.trim()));
           } else if (param instanceof Array) {
-            isValid = ruleValues.some(val =>
-              param.filter(par => par.includes(val.trim())),
+            isValid = ruleValues.some((val) =>
+              param.filter((par) => par.includes(val.trim())),
             );
           }
         }
@@ -367,11 +369,11 @@ const validateProtocolKey = (operation, ruleValues, param) => {
         } else if (ruleValues.length > 1) {
           if (typeof param === 'string') {
             isValid = ruleValues.some(
-              val => Number(val.trim()) === param.length,
+              (val) => Number(val.trim()) === param.length,
             );
           } else if (param instanceof Array) {
-            isValid = ruleValues.some(val =>
-              param.filter(par => Number(val.trim()) === par.length),
+            isValid = ruleValues.some((val) =>
+              param.filter((par) => Number(val.trim()) === par.length),
             );
           }
         }
@@ -398,10 +400,10 @@ const appPatternValidator = (externalApp, parsedProtocol) => {
     const patternValidators = {};
     const protocolKeys = Object.keys(parsedProtocol);
     logger(4, 'iot-agent', 'appPatternValidator:req', protocolKeys);
-    protocolKeys.forEach(key => {
+    protocolKeys.forEach((key) => {
       if (externalApp.validators[key] && externalApp.validators[key] !== null) {
         const validator = externalApp.validators[key];
-        validator.forEach(rule => {
+        validator.forEach((rule) => {
           if (ruleIsValid(rule)) {
             if (rule.transformation && rule.transformation !== null) {
               parsedProtocol[key] = transformProtocolKey(
@@ -436,11 +438,11 @@ const appPatternValidator = (externalApp, parsedProtocol) => {
  * @param {object} validators - User defined validation steps executed on pattern fields.
  * @returns {boolean}
  */
-const checkRulesAreValid = validators => {
+const checkRulesAreValid = (validators) => {
   try {
     const successFields = [];
     const failFields = [];
-    Object.keys(validators).forEach(field => {
+    Object.keys(validators).forEach((field) => {
       if (
         !validators[field] ||
         validators[field] === null ||
@@ -470,7 +472,7 @@ const checkRulesAreValid = validators => {
  * @param {string} externalApp.pattern - External Application pattern  ( see mqtt pattern ).
  * @param {boolean} externalApp.status - Connection status
  * @param {object} externalApp.validators - User defined validation steps executed on pattern fields.
- * @returns {object} found pattern.name and pattern.params
+ * @returns {object | null} found pattern.name and pattern.params
  */
 const appPatternDetector = (packet, externalApp) => {
   try {

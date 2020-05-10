@@ -1,6 +1,6 @@
 # Aloes - IoT Agent
 
-- Encode / decode MQTT stream from IoT devices to Web browsers.
+- Encode / decode MQTT packets from IoT devices to Web browsers.
 - Use [Open Mobile Alliance](http://www.openmobilealliance.org/wp/OMNA/LwM2M/LwM2MRegistry.html) standards as main target / source protocol.
 
 [Full Docs](https://aloes.frama.io/iot-agent/)

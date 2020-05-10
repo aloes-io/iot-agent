@@ -18,24 +18,24 @@
 ## IoTAgent
 
 * [IoTAgent](#module_IoTAgent)
-    * [.patternDetector(packet)](#module_IoTAgent.patternDetector) ⇒ <code>object</code>
-    * [.encode(packet, protocol)](#module_IoTAgent.encode) ⇒ <code>object</code> \| <code>Array.&lt;object&gt;</code>
-    * [.decode(packet, protocol)](#module_IoTAgent.decode) ⇒ <code>object</code>
+    * [.patternDetector(packet)](#module_IoTAgent.patternDetector) ⇒ <code>object</code> \| <code>null</code>
+    * [.encode(packet, protocol)](#module_IoTAgent.encode) ⇒ <code>object</code> \| <code>Array.&lt;object&gt;</code> \| <code>null</code>
+    * [.decode(packet, protocol)](#module_IoTAgent.decode) ⇒ <code>object</code> \| <code>null</code>
     * [.publish(options)](#module_IoTAgent.publish) ⇒ <code>object</code>
     * [.ruleIsValid(rule)](#module_IoTAgent.ruleIsValid) ⇒ <code>boolean</code>
     * [.transformProtocolKey(transformation, param)](#module_IoTAgent.transformProtocolKey) ⇒ <code>any</code>
     * [.validateProtocolKey(operation, ruleValues, param)](#module_IoTAgent.validateProtocolKey) ⇒ <code>boolean</code>
     * [.appPatternValidator(externalApp, parsedProtocol)](#module_IoTAgent.appPatternValidator) ⇒ <code>object</code>
     * [.checkRulesAreValid(validators)](#module_IoTAgent.checkRulesAreValid) ⇒ <code>boolean</code>
-    * [.appPatternDetector(packet, externalApp)](#module_IoTAgent.appPatternDetector) ⇒ <code>object</code>
+    * [.appPatternDetector(packet, externalApp)](#module_IoTAgent.appPatternDetector) ⇒ <code>object</code> \| <code>null</code>
 
 <a name="module_IoTAgent.patternDetector"></a>
 
-### IoTAgent.patternDetector(packet) ⇒ <code>object</code>
+### IoTAgent.patternDetector(packet) ⇒ <code>object</code> \| <code>null</code>
 Retrieve routing pattern from MQTT packet.topic and supported IoT protocols
 
 **Kind**: static method of [<code>IoTAgent</code>](#module_IoTAgent)  
-**Returns**: <code>object</code> - found pattern.name and pattern.params  
+**Returns**: <code>object</code> \| <code>null</code> - found pattern.name and pattern.params  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -43,11 +43,11 @@ Retrieve routing pattern from MQTT packet.topic and supported IoT protocols
 
 <a name="module_IoTAgent.encode"></a>
 
-### IoTAgent.encode(packet, protocol) ⇒ <code>object</code> \| <code>Array.&lt;object&gt;</code>
+### IoTAgent.encode(packet, protocol) ⇒ <code>object</code> \| <code>Array.&lt;object&gt;</code> \| <code>null</code>
 Encode IoT native protocol incoming data to Aloes Client protocol
 
 **Kind**: static method of [<code>IoTAgent</code>](#module_IoTAgent)  
-**Returns**: <code>object</code> \| <code>Array.&lt;object&gt;</code> - composed instance(s)  
+**Returns**: <code>object</code> \| <code>Array.&lt;object&gt;</code> \| <code>null</code> - composed instance(s)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -57,11 +57,11 @@ Encode IoT native protocol incoming data to Aloes Client protocol
 
 <a name="module_IoTAgent.decode"></a>
 
-### IoTAgent.decode(packet, protocol) ⇒ <code>object</code>
+### IoTAgent.decode(packet, protocol) ⇒ <code>object</code> \| <code>null</code>
 Decode Aloes Client incoming data to native protocol
 
 **Kind**: static method of [<code>IoTAgent</code>](#module_IoTAgent)  
-**Returns**: <code>object</code> - packet - { topic, payload }  
+**Returns**: <code>object</code> \| <code>null</code> - packet - { topic, payload }  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -75,6 +75,11 @@ Encode incoming supported protocol properties to defined transport protocol
 
 **Kind**: static method of [<code>IoTAgent</code>](#module_IoTAgent)  
 **Returns**: <code>object</code> - encoded MQTT packet, {topic, payload}  
+**Throws**:
+
+- <code>Error</code> 'Option must be an object type with data & pattern protoperties'
+- <code>Error</code> 'Protocol not supported yet'
+
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -145,11 +150,11 @@ Verify each validator step result
 
 <a name="module_IoTAgent.appPatternDetector"></a>
 
-### IoTAgent.appPatternDetector(packet, externalApp) ⇒ <code>object</code>
+### IoTAgent.appPatternDetector(packet, externalApp) ⇒ <code>object</code> \| <code>null</code>
 Retrieve routing pattern from MQTT packet.topic and registered application
 
 **Kind**: static method of [<code>IoTAgent</code>](#module_IoTAgent)  
-**Returns**: <code>object</code> - found pattern.name and pattern.params  
+**Returns**: <code>object</code> \| <code>null</code> - found pattern.name and pattern.params  
 
 | Param | Type | Description |
 | --- | --- | --- |
