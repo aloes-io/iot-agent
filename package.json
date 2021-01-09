@@ -17,7 +17,7 @@
     "example": "export NODE_ENV=test; nodemon ./examples/index.js"
   },
   "files": [
-    "src/index",
+    "src/index.js",
     "package.json",
     "README.md"
   ],
