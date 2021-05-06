@@ -41,7 +41,7 @@
     "mysensors-handlers": "^1.1.2"
   },
   "devDependencies": {
-    "aedes": "^0.41.0",
+    "aedes": "^0.42.1",
     "async-mqtt": "^2.5.0",
     "chai": "^4.2.0",
     "eslint": "^7.0.0",
